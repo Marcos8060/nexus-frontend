@@ -1,16 +1,9 @@
 import { 
   LayoutDashboard,
-  Users,
-  Briefcase,
-  Image,
-  Workflow,
+  FileAudio,
   FileText,
-  Settings,
-  Shield,
-  CreditCard,
-  KeyRound,
-  Link,
-  Activity
+  Brain,
+  BarChart3
 } from "lucide-react";
 import { IconType } from "react-icons";
 
@@ -28,7 +21,28 @@ const sidebarMenu: MenuItem[] = [
     path: "/dashboard",
     icon: LayoutDashboard,
   },
-  
+  {
+    label: "Interview Management",
+    path: "/dashboard/interviews",
+    icon: FileAudio,
+    children: [
+      {
+        label: "All Interviews",
+        path: "/dashboard/interviews",
+        icon: FileText,
+      },
+      {
+        label: "Analytics",
+        path: "/dashboard",
+        icon: BarChart3,
+      },
+      {
+        label: "AI Insights",
+        path: "/dashboard/insights",
+        icon: Brain,
+      },
+    ],
+  },
 ];
 
 export default sidebarMenu;

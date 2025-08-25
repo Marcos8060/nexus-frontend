@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ReduxProvider } from "./providers";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Nexus",
+  title: "HR Interview Transcription & Analysis",
+  description: "Upload, transcribe, and analyze interview recordings with AI-powered insights",
 };
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          {children}
+          <Toaster position="top-right" />
+        </ReduxProvider>
       </body>
     </html>
   );

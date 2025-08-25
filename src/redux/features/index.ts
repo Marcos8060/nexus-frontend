@@ -15,8 +15,4 @@ const nexusSlice = createSlice({
 
 export const { setNexus } = nexusSlice.actions;
 
-
-
-
-
 export default nexusSlice.reducer;
