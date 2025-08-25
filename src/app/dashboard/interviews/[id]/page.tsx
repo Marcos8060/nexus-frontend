@@ -29,42 +29,114 @@ import {
 import { formatTime } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import ReactPlayer from 'react-player';
+
 
 export default function InterviewDetailPage() {
   const params = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const { currentInterview, currentTime, isPlaying, loading } = useSelector((state: RootState) => state.interview);
+  const { currentInterview, currentTime, isPlaying, loading, error } = useSelector((state: RootState) => state.interview);
+  
+  // Debug logging
+  console.log('Interview Detail Page State:', {
+    loading,
+    error,
+    currentInterview: currentInterview ? {
+      id: currentInterview.id,
+      original_name: currentInterview.original_name,
+      cloudinary_url: currentInterview.cloudinary_url,
+      status: currentInterview.status
+    } : null
+  });
   const [searchQuery, setSearchQuery] = useState('');
-  const [playerRef, setPlayerRef] = useState<ReactPlayer | null>(null);
+  const [playerRef, setPlayerRef] = useState<HTMLVideoElement | null>(null);
+  const [playerError, setPlayerError] = useState<string | null>(null);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
 
   useEffect(() => {
     if (params.id) {
+      console.log('Fetching interview with ID:', params.id);
       dispatch(fetchInterview(params.id as string));
     }
   }, [dispatch, params.id]);
 
-  const handlePlayPause = () => {
-    dispatch(setIsPlaying(!isPlaying));
+  // Reset player state when interview changes
+  useEffect(() => {
+    if (currentInterview) {
+      setIsPlayerReady(false);
+      setPlayerError(null);
+      dispatch(setCurrentTime(0));
+      dispatch(setIsPlaying(false));
+    }
+  }, [currentInterview, dispatch]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Pause playback when component unmounts
+      dispatch(setIsPlaying(false));
+      setPlayerRef(null);
+    };
+  }, [dispatch]);
+
+  const handlePlayPause = async () => {
+    try {
+      if (playerRef && isPlayerReady) {
+        if (isPlaying) {
+          playerRef.pause();
+        } else {
+          playerRef.play();
+        }
+      }
+    } catch (error) {
+      console.error('Play/Pause error:', error);
+      setPlayerError('Failed to control playback');
+    }
   };
 
   const handleSeek = (time: number) => {
-    if (playerRef) {
-      playerRef.seekTo(time);
-      dispatch(setCurrentTime(time));
+    try {
+      if (playerRef && isPlayerReady) {
+        playerRef.currentTime = time;
+        dispatch(setCurrentTime(time));
+      }
+    } catch (error) {
+      console.error('Seek error:', error);
+      setPlayerError('Failed to seek to position');
     }
-  };
-
-  const handleProgress = (state: { playedSeconds: number }) => {
-    dispatch(setCurrentTime(state.playedSeconds));
   };
 
   const handleSkip = (seconds: number) => {
-    if (playerRef) {
-      const newTime = Math.max(0, currentTime + seconds);
-      playerRef.seekTo(newTime);
-      dispatch(setCurrentTime(newTime));
+    try {
+      if (playerRef && isPlayerReady) {
+        const newTime = Math.max(0, currentTime + seconds);
+        playerRef.currentTime = newTime;
+        dispatch(setCurrentTime(newTime));
+      }
+    } catch (error) {
+      console.error('Skip error:', error);
+      setPlayerError('Failed to skip');
     }
+  };
+
+
+
+  // Helper function to get video URL
+  const getVideoUrl = (filePath: string): string => {
+    // If the interview has a Cloudinary URL, use it
+    if (currentInterview?.cloudinary_url) {
+      console.log('Using Cloudinary URL:', currentInterview.cloudinary_url);
+      return currentInterview.cloudinary_url;
+    }
+    
+    // If it's already a full URL (Cloudinary), return as is
+    if (filePath.startsWith('http')) {
+      console.log('Using direct URL:', filePath);
+      return filePath;
+    }
+    
+    // Fallback to mock video for testing
+    console.log('Using fallback video URL');
+    return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
   };
 
   if (loading) {
@@ -78,6 +150,21 @@ export default function InterviewDetailPage() {
             <div className="h-96 bg-slate-200 dark:bg-slate-700 rounded"></div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold mb-4 text-red-600">Error Loading Interview</h2>
+        <p className="text-muted-foreground mb-6">{error}</p>
+        <Button asChild>
+          <Link href="/dashboard/interviews">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Interviews
+          </Link>
+        </Button>
       </div>
     );
   }
@@ -123,6 +210,8 @@ export default function InterviewDetailPage() {
     item.text.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -166,28 +255,65 @@ export default function InterviewDetailPage() {
           <div className="space-y-4">
             {/* Video/Audio Player */}
             <div className="relative bg-slate-900 rounded-lg overflow-hidden">
-              <ReactPlayer
-                ref={setPlayerRef}
-                url={currentInterview.file_path}
-                playing={isPlaying}
-                onProgress={handleProgress}
-                width="100%"
-                height="400px"
-                controls={false}
-                style={{ backgroundColor: '#1e293b' }}
-              />
+              {playerError ? (
+                <div className="flex items-center justify-center h-64 bg-slate-800 text-white">
+                  <div className="text-center">
+                    <p className="text-red-400 mb-2">{playerError}</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        setPlayerError(null);
+                        setIsPlayerReady(false);
+                      }}
+                    >
+                      Retry
+                    </Button>
+                  </div>
+                </div>
+                             ) : (
+                 <div className="relative w-full h-64">
+                   <video
+                     ref={setPlayerRef}
+                     src={getVideoUrl(currentInterview.file_path)}
+                     className="w-full h-full object-cover"
+                     onTimeUpdate={(e) => {
+                       const video = e.target as HTMLVideoElement;
+                       dispatch(setCurrentTime(video.currentTime));
+                     }}
+                     onPlay={() => dispatch(setIsPlaying(true))}
+                     onPause={() => dispatch(setIsPlaying(false))}
+                     onLoadedData={() => setIsPlayerReady(true)}
+                     onError={() => setPlayerError('Failed to load video')}
+                   />
+                 </div>
+               )}
             </div>
 
             {/* Player Controls */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleSkip(-10)}>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleSkip(-10)}
+                  disabled={!isPlayerReady}
+                >
                   <SkipBack className="h-4 w-4" />
                 </Button>
-                <Button onClick={handlePlayPause} size="sm">
+                <Button 
+                  onClick={handlePlayPause} 
+                  size="sm"
+                  disabled={!isPlayerReady}
+                >
                   {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => handleSkip(10)}>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleSkip(10)}
+                  disabled={!isPlayerReady}
+                >
                   <SkipForward className="h-4 w-4" />
                 </Button>
               </div>
@@ -196,6 +322,9 @@ export default function InterviewDetailPage() {
                 <span className="text-sm text-muted-foreground">
                   {formatTime(currentTime)} / {formatTime(transcript[transcript.length - 1]?.end || 0)}
                 </span>
+                {!isPlayerReady && (
+                  <span className="text-xs text-amber-600">Loading...</span>
+                )}
               </div>
             </div>
           </div>

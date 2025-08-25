@@ -27,10 +27,13 @@ export interface Interview {
   original_name: string;
   file_size: number;
   file_path: string;
+  cloudinary_url?: string;
+  cloudinary_public_id?: string;
   upload_date: string;
   status: 'uploaded' | 'processing' | 'completed' | 'failed';
   transcript?: TranscriptItem[];
   analysis?: Analysis;
+  tags?: Tag[];
   created_at: string;
   updated_at: string;
 }

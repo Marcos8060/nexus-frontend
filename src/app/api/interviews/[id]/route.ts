@@ -9,6 +9,8 @@ export async function GET(
     const { id } = params;
     const backendUrl = `${INTERVIEW_API_URL.BASE_URL}${INTERVIEW_API_URL.GET_BY_ID}/${id}`;
     
+    console.log('Fetching interview from backend:', backendUrl);
+    
     const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
@@ -27,6 +29,7 @@ export async function GET(
     }
 
     const data = await response.json();
+    console.log('Backend response:', data);
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching interview:', error);
