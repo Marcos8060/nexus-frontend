@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { fetchInterview, setCurrentTime, setIsPlaying } from '@/redux/features/interviewSlice';
+import { fetchInterview, setCurrentTime, setIsPlaying, transcribeInterview } from '@/redux/features/interviewSlice';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,7 @@ import {
 import { formatTime } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { interviewApi } from '@/lib/api';
 
 
 export default function InterviewDetailPage() {
@@ -68,6 +69,23 @@ export default function InterviewDetailPage() {
       dispatch(setIsPlaying(false));
     }
   }, [currentInterview, dispatch]);
+
+  // Status polling for transcription
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (currentInterview && currentInterview.status === 'processing') {
+      interval = setInterval(() => {
+        dispatch(fetchInterview(currentInterview.id));
+      }, 2000); // Poll every 2 seconds
+    }
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [currentInterview?.status, currentInterview?.id, dispatch]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -115,6 +133,43 @@ export default function InterviewDetailPage() {
     } catch (error) {
       console.error('Skip error:', error);
       setPlayerError('Failed to skip');
+    }
+  };
+
+  const handleExport = async (format: string = 'json') => {
+    if (!currentInterview) return;
+    
+    try {
+      const data = await interviewApi.exportInterview(currentInterview.id, format);
+      
+      if (format === 'json') {
+        // Download JSON file
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${currentInterview.original_name}_export.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else if (format === 'txt') {
+        // Download text file
+        const blob = new Blob([data.content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.filename || `${currentInterview.original_name}_export.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      toast.success(`Interview exported as ${format.toUpperCase()}`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export interview');
     }
   };
 
@@ -184,26 +239,13 @@ export default function InterviewDetailPage() {
     );
   }
 
-  // Mock transcript data
-  const transcript = [
-    { start: 0, end: 5, text: "Hello, welcome to our interview today. Can you tell us a bit about yourself?" },
-    { start: 5, end: 15, text: "Sure! I'm a software developer with 5 years of experience in React and Node.js." },
-    { start: 15, end: 25, text: "That's great! Can you walk us through your experience with TypeScript?" },
-    { start: 25, end: 40, text: "I've been using TypeScript for about 3 years now. I find it really helpful for catching errors early." },
-    { start: 40, end: 55, text: "Excellent. What about your experience with cloud platforms like AWS?" },
-    { start: 55, end: 70, text: "I've worked extensively with AWS, particularly with EC2, S3, and Lambda functions." },
-  ];
-
-  // Mock analysis data
-  const analysis = {
-    summary: "This interview covers the candidate's experience with modern web development technologies including React, TypeScript, and AWS. The candidate demonstrates strong technical knowledge and practical experience.",
-    sentiment: "positive",
-    keywords: ["React", "TypeScript", "AWS", "Node.js", "development"],
-    questions: [
-      "Can you tell us about yourself?",
-      "What's your experience with TypeScript?",
-      "How familiar are you with AWS?"
-    ]
+  // Use real transcript and analysis data from the interview
+  const transcript = currentInterview.transcript || [];
+  const analysis = currentInterview.analysis || {
+    summary: "No analysis available yet. Start transcription to generate analysis.",
+    sentiment: "neutral",
+    keywords: [],
+    questions: []
   };
 
   const filteredTranscript = transcript.filter(item => 
@@ -228,19 +270,46 @@ export default function InterviewDetailPage() {
             <p className="text-muted-foreground">Interview Analysis & Transcript</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button variant="outline" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
+                 <div className="flex items-center gap-2">
+           {currentInterview.status === 'uploaded' && (
+             <Button 
+               onClick={() => dispatch(transcribeInterview(currentInterview.id))}
+               disabled={loading}
+               className="bg-blue-600 hover:bg-blue-700"
+             >
+               <Brain className="h-4 w-4 mr-2" />
+               Start Transcription
+             </Button>
+           )}
+           {currentInterview.status === 'processing' && (
+             <div className="flex items-center gap-2 text-blue-600">
+               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+               <span>Transcribing...</span>
+             </div>
+           )}
+           {currentInterview.status === 'completed' && (
+             <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+               <Brain className="h-3 w-3 mr-1" />
+               Completed
+             </Badge>
+           )}
+           <Button variant="outline" size="sm">
+             <Share2 className="h-4 w-4 mr-2" />
+             Share
+           </Button>
+           <Button 
+             variant="outline" 
+             size="sm"
+             onClick={() => handleExport('json')}
+             disabled={!currentInterview.transcript}
+           >
+             <Download className="h-4 w-4 mr-2" />
+             Export JSON
+           </Button>
+           <Button variant="outline" size="sm">
+             <MoreHorizontal className="h-4 w-4" />
+           </Button>
+         </div>
       </div>
 
       {/* Media Player */}
@@ -402,17 +471,19 @@ export default function InterviewDetailPage() {
                     {analysis.summary}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Key Questions Asked</h4>
-                  <ul className="space-y-1">
-                    {analysis.questions.map((question, index) => (
-                      <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="text-primary">•</span>
-                        {question}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                                 <div className="space-y-2">
+                   <h4 className="font-semibold">Key Questions Asked</h4>
+                   <ul className="space-y-1">
+                     {analysis.questions?.map((question, index) => (
+                       <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                         <span className="text-primary">•</span>
+                         {typeof question === 'string' ? question : question.question}
+                       </li>
+                     )) || (
+                       <li className="text-sm text-muted-foreground">No questions available</li>
+                     )}
+                   </ul>
+                 </div>
               </TabsContent>
 
               <TabsContent value="sentiment" className="space-y-4">
@@ -437,18 +508,22 @@ export default function InterviewDetailPage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="keywords" className="space-y-4">
-                <div className="space-y-3">
-                  {analysis.keywords.map((keyword, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
-                      <span className="font-medium">{keyword}</span>
-                      <Badge variant="secondary">
-                        {Math.floor(Math.random() * 20) + 10} mentions
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
+                             <TabsContent value="keywords" className="space-y-4">
+                 <div className="space-y-3">
+                   {analysis.keywords?.map((keyword, index) => (
+                     <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                       <span className="font-medium">{keyword}</span>
+                       <Badge variant="secondary">
+                         {Math.floor(Math.random() * 20) + 10} mentions
+                       </Badge>
+                     </div>
+                   )) || (
+                     <div className="text-center p-4 text-muted-foreground">
+                       No keywords available
+                     </div>
+                   )}
+                 </div>
+               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>

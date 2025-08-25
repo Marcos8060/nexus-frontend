@@ -57,6 +57,54 @@ export const interviewApi = {
     const response = await api.delete(`/interviews/${id}`);
     return response.data;
   },
+
+  // Export interview
+  exportInterview: async (id: string, format: string = 'json'): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/export?format=${format}`);
+    return response.data;
+  },
+
+  // Search transcript
+  searchTranscript: async (id: string, query: string): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/search?query=${encodeURIComponent(query)}`);
+    return response.data;
+  },
+
+  // Get keywords
+  getKeywords: async (id: string): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/keywords`);
+    return response.data;
+  },
+
+  // Get questions
+  getQuestions: async (id: string): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/questions`);
+    return response.data;
+  },
+
+  // Get topics
+  getTopics: async (id: string): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/topics`);
+    return response.data;
+  },
+
+  // Get speaker analysis
+  getSpeakerAnalysis: async (id: string): Promise<any> => {
+    const response = await api.get(`/interviews/${id}/speaker-analysis`);
+    return response.data;
+  },
+
+  // Add tag
+  addTag: async (id: string, tag: any): Promise<any> => {
+    const response = await api.post(`/interviews/${id}/tags`, tag);
+    return response.data;
+  },
+
+  // Delete tag
+  deleteTag: async (id: string, tagId: string): Promise<any> => {
+    const response = await api.delete(`/interviews/${id}/tags/${tagId}`);
+    return response.data;
+  },
 };
 
 // Mock data for development
