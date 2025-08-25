@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Interview, Tag, SearchResult } from '@/types/interview';
 import { interviewApi } from '@/lib/api';
+import { Interview, TranscriptItem, Tag, SearchResult } from '@/types/interview';
 
 interface InterviewState {
   interviews: Interview[];
@@ -63,6 +63,14 @@ export const transcribeInterview = createAsyncThunk(
   }
 );
 
+export const deleteInterview = createAsyncThunk(
+  'interview/deleteInterview',
+  async (id: string) => {
+    const response = await interviewApi.deleteInterview(id);
+    return { id, response };
+  }
+);
+
 const interviewSlice = createSlice({
   name: 'interview',
   initialState,
@@ -72,9 +80,6 @@ const interviewSlice = createSlice({
     },
     setIsPlaying: (state, action: PayloadAction<boolean>) => {
       state.isPlaying = action.payload;
-    },
-    setCurrentInterview: (state, action: PayloadAction<Interview | null>) => {
-      state.currentInterview = action.payload;
     },
     addTag: (state, action: PayloadAction<Tag>) => {
       state.tags.push(action.payload);
@@ -88,18 +93,22 @@ const interviewSlice = createSlice({
     setSearchResults: (state, action: PayloadAction<SearchResult[]>) => {
       state.searchResults = action.payload;
     },
+    clearSearch: (state) => {
+      state.searchResults = [];
+      state.searchQuery = '';
+    },
     setSelectedText: (state, action: PayloadAction<string>) => {
       state.selectedText = action.payload;
     },
     setSelectedRange: (state, action: PayloadAction<{ start: number; end: number } | null>) => {
       state.selectedRange = action.payload;
     },
-    clearSearch: (state) => {
-      state.searchQuery = '';
-      state.searchResults = [];
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
+    // fetchInterviews
     builder
       .addCase(fetchInterviews.pending, (state) => {
         state.loading = true;
@@ -112,7 +121,10 @@ const interviewSlice = createSlice({
       .addCase(fetchInterviews.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch interviews';
-      })
+      });
+
+    // uploadInterview
+    builder
       .addCase(uploadInterview.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -126,7 +138,10 @@ const interviewSlice = createSlice({
       .addCase(uploadInterview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to upload interview';
-      })
+      });
+
+    // fetchInterview
+    builder
       .addCase(fetchInterview.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -134,16 +149,54 @@ const interviewSlice = createSlice({
       .addCase(fetchInterview.fulfilled, (state, action) => {
         state.loading = false;
         state.currentInterview = action.payload;
+        if (action.payload.tags) {
+          state.tags = action.payload.tags;
+        }
       })
       .addCase(fetchInterview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch interview';
+      });
+
+    // transcribeInterview
+    builder
+      .addCase(transcribeInterview.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(transcribeInterview.fulfilled, (state, action) => {
-        const interview = state.interviews.find(i => i.id === action.payload.id);
-        if (interview) {
-          interview.status = 'processing';
+        state.loading = false;
+        // Update the interview status in the list
+        const interviewIndex = state.interviews.findIndex(i => i.id === action.payload.id);
+        if (interviewIndex !== -1) {
+          state.interviews[interviewIndex].status = 'processing';
         }
+        if (state.currentInterview && state.currentInterview.id === action.payload.id) {
+          state.currentInterview.status = 'processing';
+        }
+      })
+      .addCase(transcribeInterview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to start transcription';
+      });
+
+    // deleteInterview
+    builder
+      .addCase(deleteInterview.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteInterview.fulfilled, (state, action) => {
+        state.loading = false;
+        // Remove the interview from the list
+        state.interviews = state.interviews.filter(i => i.id !== action.payload.id);
+        if (state.currentInterview && state.currentInterview.id === action.payload.id) {
+          state.currentInterview = null;
+        }
+      })
+      .addCase(deleteInterview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to delete interview';
       });
   },
 });
@@ -151,14 +204,14 @@ const interviewSlice = createSlice({
 export const {
   setCurrentTime,
   setIsPlaying,
-  setCurrentInterview,
   addTag,
   removeTag,
   setSearchQuery,
   setSearchResults,
+  clearSearch,
   setSelectedText,
   setSelectedRange,
-  clearSearch,
+  clearError,
 } = interviewSlice.actions;
 
 export default interviewSlice.reducer;

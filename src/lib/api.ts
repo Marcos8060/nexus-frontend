@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { Interview, UploadResponse, InterviewStatus } from '@/types/interview';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
+// Use Next.js API routes instead of direct backend calls
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -16,7 +15,7 @@ export const interviewApi = {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await api.post('/api/interviews/upload', formData, {
+    const response = await api.post('/interviews/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -27,7 +26,7 @@ export const interviewApi = {
   // Get all interviews
   getInterviews: async (): Promise<Interview[]> => {
     try {
-      const response = await api.get('/api/interviews');
+      const response = await api.get('/interviews');
       return response.data || [];
     } catch (error) {
       console.error('Failed to fetch interviews:', error);
@@ -37,19 +36,25 @@ export const interviewApi = {
 
   // Get single interview
   getInterview: async (id: string): Promise<Interview> => {
-    const response = await api.get(`/api/interviews/${id}`);
+    const response = await api.get(`/interviews/${id}`);
     return response.data;
   },
 
   // Start transcription
   transcribeInterview: async (id: string): Promise<UploadResponse> => {
-    const response = await api.post(`/api/interviews/${id}/transcribe`);
+    const response = await api.post(`/interviews/${id}/transcribe`);
     return response.data;
   },
 
   // Get interview status
   getInterviewStatus: async (id: string): Promise<InterviewStatus> => {
-    const response = await api.get(`/api/interviews/${id}/status`);
+    const response = await api.get(`/interviews/${id}/status`);
+    return response.data;
+  },
+
+  // Delete interview
+  deleteInterview: async (id: string): Promise<{ ok: boolean; message: string }> => {
+    const response = await api.delete(`/interviews/${id}`);
     return response.data;
   },
 };

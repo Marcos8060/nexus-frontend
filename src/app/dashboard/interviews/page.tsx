@@ -3,13 +3,24 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { fetchInterviews, uploadInterview } from '@/redux/features/interviewSlice';
+import { fetchInterviews, uploadInterview, deleteInterview } from '@/redux/features/interviewSlice';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { 
   Upload, 
   FileAudio, 
@@ -40,6 +51,7 @@ export default function DashboardInterviewsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [interviewToDelete, setInterviewToDelete] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     dispatch(fetchInterviews());
@@ -90,6 +102,18 @@ export default function DashboardInterviewsPage() {
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
+    }
+  };
+
+  const handleDeleteInterview = async () => {
+    if (!interviewToDelete) return;
+
+    try {
+      await dispatch(deleteInterview(interviewToDelete.id)).unwrap();
+      toast.success('Interview deleted successfully!');
+      setInterviewToDelete(null);
+    } catch (error) {
+      toast.error('Failed to delete interview');
     }
   };
 
@@ -280,12 +304,12 @@ export default function DashboardInterviewsPage() {
                       </div>
                       
                       <div className="flex gap-2">
-                                                 <Button asChild size="sm" className="flex-1">
-                           <Link href={`/dashboard/interviews/${interview.id}`}>
-                             <Eye className="h-4 w-4 mr-2" />
-                             View
-                           </Link>
-                         </Button>
+                        <Button asChild size="sm" className="flex-1">
+                          <Link href={`/dashboard/interviews/${interview.id}`}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View
+                          </Link>
+                        </Button>
                         
                         {interview.status === 'uploaded' && (
                           <Button size="sm" variant="outline">
@@ -300,6 +324,40 @@ export default function DashboardInterviewsPage() {
                             Export
                           </Button>
                         )}
+                      </div>
+                      
+                      <div className="flex justify-end">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              onClick={() => setInterviewToDelete({ id: interview.id, name: interview.original_name })}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Interview</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{interview.original_name}"? This action cannot be undone and will permanently remove the interview file and all associated data.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel onClick={() => setInterviewToDelete(null)}>
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={handleDeleteInterview}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Delete Interview
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </CardContent>
