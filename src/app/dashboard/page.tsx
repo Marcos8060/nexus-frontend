@@ -208,7 +208,7 @@ export default function DashboardPage() {
                         {interview.status}
                       </Badge>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/interviews/${interview.id}`}>
+                        <Link href={`/dashboard/interviews/${interview.id}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
