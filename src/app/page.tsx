@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { 
   FileAudio, 
   Brain, 
@@ -26,15 +27,15 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
-      <header className="border-b border-slate-200/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
               <div className="relative">
-                <div className="text-2xl font-bold text-slate-900">INTERVIEW</div>
+                <div className="text-2xl font-bold text-foreground">INTERVIEW</div>
                 <div className="absolute -top-1 -right-1 flex space-x-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
@@ -42,25 +43,26 @@ export default function Home() {
                   <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 </div>
               </div>
-              <div className="text-sm text-slate-600 font-medium">Transcription & Analysis</div>
+              <div className="text-sm text-muted-foreground font-medium">Transcription & Analysis</div>
             </div>
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Features</a>
-              <a href="#insights" className="text-slate-600 hover:text-slate-900 transition-colors">Insights</a>
-              <a href="#community" className="text-slate-600 hover:text-slate-900 transition-colors">Community</a>
-              <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
+              <a href="#insights" className="text-muted-foreground hover:text-foreground transition-colors">Insights</a>
+              <a href="#community" className="text-muted-foreground hover:text-foreground transition-colors">Community</a>
+              <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
             </nav>
 
             {/* CTA */}
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
               <Button variant="ghost" size="sm">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
                 onClick={() => router.push('/dashboard')}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
+                className="bg-foreground hover:bg-foreground/90 text-background"
               >
                 Get Started
               </Button>
@@ -80,7 +82,7 @@ export default function Home() {
             </Badge>
 
             {/* Headline */}
-            <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
               HR Solutions
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-600">
@@ -89,7 +91,7 @@ export default function Home() {
             </h1>
 
             {/* Description */}
-            <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
+            <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
               A cloud-based HR solution that provides intelligent interview transcription, 
               real-time analysis, and AI-powered insights to enhance your talent acquisition 
               and employee development processes.

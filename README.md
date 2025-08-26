@@ -231,7 +231,6 @@ In the allocated 5 hours, I successfully delivered:
 - **Loading States**: Comprehensive loading indicators
 - **Toast Notifications**: User feedback system
 - **Responsive Layout**: Mobile-first design
-- **Dark/Light Mode**: Theme switching
 - **Keyboard Shortcuts**: Play/pause, seek, navigation
 - **Accessibility**: ARIA labels, keyboard navigation
 

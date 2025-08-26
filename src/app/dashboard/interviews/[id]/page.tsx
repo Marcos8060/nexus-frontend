@@ -327,10 +327,10 @@ export default function InterviewDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
+            <h1 className="text-2xl font-bold text-foreground">
               {currentInterview.original_name}
             </h1>
-            <p className="text-muted-foreground text-slate-600">
+            <p className="text-muted-foreground">
               Interview Analysis & Transcript
             </p>
           </div>
@@ -378,9 +378,9 @@ export default function InterviewDetailPage() {
       </div>
 
       {/* Media Player */}
-      <Card className="bg-white">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-slate-600">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <FileText className="h-5 w-5" />
             Media Player
           </CardTitle>
@@ -478,8 +478,8 @@ export default function InterviewDetailPage() {
                        <Volume2 className="h-4 w-4 text-muted-foreground" />
                      )}
                    </Button>
-                   {showVolumeSlider && (
-                     <div className="absolute bottom-full right-0 mb-2 p-2 bg-white dark:bg-slate-800 border rounded-lg shadow-lg">
+                                       {showVolumeSlider && (
+                      <div className="absolute bottom-full right-0 mb-2 p-2 bg-background border border-border rounded-lg shadow-lg">
                        <input
                          type="range"
                          min="0"
@@ -487,10 +487,10 @@ export default function InterviewDetailPage() {
                          step="0.1"
                          value={isMuted ? 0 : volume}
                          onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                         className="w-20 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
-                         style={{
-                           background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(isMuted ? 0 : volume) * 100}%, #e5e7eb ${(isMuted ? 0 : volume) * 100}%, #e5e7eb 100%)`
-                         }}
+                                                   className="w-20 h-2 bg-muted rounded-lg appearance-none cursor-pointer slider"
+                          style={{
+                            background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${(isMuted ? 0 : volume) * 100}%, hsl(var(--muted)) ${(isMuted ? 0 : volume) * 100}%, hsl(var(--muted)) 100%)`
+                          }}
                        />
                      </div>
                    )}
@@ -511,15 +511,15 @@ export default function InterviewDetailPage() {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Transcript */}
-        <Card className="bg-white">
+        <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-slate-800">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <FileText className="h-5 w-5" />
                 Transcript
               </CardTitle>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="Search transcript..."
                   value={searchQuery}
@@ -534,11 +534,11 @@ export default function InterviewDetailPage() {
               {filteredTranscript.map((item, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                    currentTime >= item.start && currentTime <= item.end
-                      ? "bg-primary/10 border border-primary/20"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800"
-                  }`}
+                                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                     currentTime >= item.start && currentTime <= item.end
+                       ? "bg-primary/10 border border-primary/20"
+                       : "hover:bg-accent"
+                   }`}
                   onClick={() => handleSeek(item.start)}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -557,9 +557,9 @@ export default function InterviewDetailPage() {
         </Card>
 
         {/* AI Analysis */}
-        <Card className="bg-white">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-slate-600">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <Brain className="h-5 w-5" />
               AI Analysis
             </CardTitle>
@@ -652,7 +652,7 @@ export default function InterviewDetailPage() {
       </div>
 
       {/* Interview Metadata */}
-      <Card className="bg-white">
+      <Card>
         <CardHeader>
           <CardTitle>Interview Details</CardTitle>
         </CardHeader>
