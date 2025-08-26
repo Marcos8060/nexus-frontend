@@ -9,14 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
-  Upload, 
   FileAudio, 
   FileVideo, 
-  Clock, 
-  Search, 
   Filter,
-  Play,
-  Pause,
   Download,
   Eye,
   TrendingUp,
@@ -29,12 +24,10 @@ import {
   Target,
   Award,
   ArrowUpRight,
-  ArrowDownRight,
   Plus,
   MoreHorizontal
 } from 'lucide-react';
 import { formatBytes, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -93,8 +86,8 @@ export default function DashboardPage() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Interview Analytics</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-600">Interview Analytics</h1>
+          <p className="text-muted-foreground text-slate-600">
             Monitor and manage your interview transcription pipeline
           </p>
         </div>
@@ -120,7 +113,7 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalInterviews}</div>
+            <div className="text-2xl font-bold text-slate-600">{totalInterviews}</div>
             <p className="text-xs text-muted-foreground">
               +{Math.floor(Math.random() * 20) + 10}% from last month
             </p>
@@ -134,7 +127,7 @@ export default function DashboardPage() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{completionRate.toFixed(1)}%</div>
+            <div className="text-2xl font-bold text-slate-600">{completionRate.toFixed(1)}%</div>
             <div className="flex items-center text-xs text-muted-foreground">
               <ArrowUpRight className="h-3 w-3 mr-1 text-green-500" />
               +5.2% from last week
@@ -149,7 +142,7 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{processingInterviews}</div>
+            <div className="text-2xl font-bold text-slate-600">{processingInterviews}</div>
             <p className="text-xs text-muted-foreground">
               Currently in transcription
             </p>
@@ -163,7 +156,7 @@ export default function DashboardPage() {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-slate-600">
               {totalInterviews > 0 ? ((completedInterviews / (totalInterviews - failedInterviews)) * 100).toFixed(1) : 0}%
             </div>
             <p className="text-xs text-muted-foreground">
@@ -177,13 +170,13 @@ export default function DashboardPage() {
       {/* Charts and Analytics Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-white">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-slate-600">
               <BarChart3 className="h-5 w-5" />
               Recent Activity
             </CardTitle>
-            <CardDescription>
+            <CardDescription className='text-slate-600'>
               Latest interview uploads and transcriptions
             </CardDescription>
           </CardHeader>
@@ -191,7 +184,7 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {recentInterviews.length > 0 ? (
                 recentInterviews.map((interview, index) => (
-                  <div key={interview.id} className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                  <div key={interview.id} className="flex items-center justify-between p-3 rounded-lg text-slate-600 border border-input bg-card hover:bg-accent/50 transition-colors">
                     <div className="flex items-center gap-3">
                       {getFileIcon(interview.filename)}
                       <div>
@@ -227,10 +220,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Quick Stats */}
-        <Card>
+        <Card className='bg-white'>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-slate-600">
+              <TrendingUp className="h-5 w-5 " />
               Quick Stats
             </CardTitle>
           </CardHeader>
@@ -259,7 +252,7 @@ export default function DashboardPage() {
               <Progress value={totalInterviews > 0 ? (failedInterviews / totalInterviews) * 100 : 0} className="h-2" />
             </div>
 
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t border-input">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">Total Files</span>
                 <span className="text-muted-foreground">
@@ -272,7 +265,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Interviews Table */}
-      <Card>
+      <Card className='bg-white text-slate-600'>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -295,7 +288,7 @@ export default function DashboardPage() {
         <CardContent>
           <div className="space-y-4">
             {filteredInterviews.slice(0, 5).map((interview) => (
-              <div key={interview.id} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+              <div key={interview.id} className="flex items-center justify-between p-4 rounded-lg border border-input bg-card hover:bg-accent/50 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     {getFileIcon(interview.filename)}
@@ -336,13 +329,13 @@ export default function DashboardPage() {
       </Card>
 
       {/* AI Insights Section */}
-      <Card>
+      <Card className='bg-white'>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-slate-600">
             <Brain className="h-5 w-5" />
             AI Insights
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-slate-600'>
             Key insights from your interview analysis
           </CardDescription>
         </CardHeader>
