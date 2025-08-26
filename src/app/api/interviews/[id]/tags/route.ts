@@ -3,10 +3,10 @@ import { INTERVIEW_API_URL } from '@/lib/api-endpoints';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = params;
     const body = await request.json();
     
     const backendUrl = `${INTERVIEW_API_URL.BASE_URL}${INTERVIEW_API_URL.TAGS}/${id}/tags`;

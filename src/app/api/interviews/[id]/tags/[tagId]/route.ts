@@ -3,10 +3,10 @@ import { INTERVIEW_API_URL } from '@/lib/api-endpoints';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; tagId: string } }
+  { params }: { params: Promise<{ id: string; tagId: string }> }
 ) {
+  const { id, tagId } = await params;
   try {
-    const { id, tagId } = params;
     
     const backendUrl = `${INTERVIEW_API_URL.BASE_URL}${INTERVIEW_API_URL.DELETE_TAG}/${id}/tags/${tagId}`;
 

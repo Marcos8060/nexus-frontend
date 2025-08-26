@@ -3,10 +3,10 @@ import { INTERVIEW_API_URL } from '@/lib/api-endpoints';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = params;
     const backendUrl = `${INTERVIEW_API_URL.BASE_URL}${INTERVIEW_API_URL.TOPICS}/${id}/topics`;
 
     const response = await fetch(backendUrl, {
