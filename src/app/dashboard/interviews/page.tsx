@@ -313,7 +313,7 @@ export default function DashboardInterviewsPage() {
                 ))}
               </div>
             ) : filteredInterviews.length === 0 ? (
-              <Card>
+              <div className="border border-dashed rounded-2xl border-slate-300">
                 <CardContent className="p-12 text-center">
                   <FileAudio className="h-12 w-12 mx-auto text-slate-400 mb-4" />
                   <h3 className="text-lg font-medium mb-2">
@@ -323,7 +323,7 @@ export default function DashboardInterviewsPage() {
                     Upload your first interview to get started
                   </p>
                 </CardContent>
-              </Card>
+              </div>
             ) : (
               <div
                 className={`grid gap-4 ${
@@ -372,13 +372,6 @@ export default function DashboardInterviewsPage() {
                             </Link>
                           </Button>
 
-                          {interview.status === "uploaded" && (
-                            <Button size="sm" variant="outline">
-                              <Play className="h-4 w-4 mr-2" />
-                              Transcribe
-                            </Button>
-                          )}
-
                           {interview.status === "completed" && (
                             <Button size="sm" variant="outline">
                               <Download className="h-4 w-4 mr-2" />
@@ -406,10 +399,10 @@ export default function DashboardInterviewsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
+                                <AlertDialogTitle className="text-slate-800">
                                   Delete Interview
                                 </AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogDescription className="text-slate-600">
                                   Are you sure you want to delete "
                                   {interview.original_name}"? This action cannot
                                   be undone and will permanently remove the
@@ -424,7 +417,7 @@ export default function DashboardInterviewsPage() {
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={handleDeleteInterview}
-                                  className="bg-red-600 hover:bg-red-700"
+                                  className="bg-red-400 hover:bg-red-700"
                                 >
                                   Delete Interview
                                 </AlertDialogAction>
