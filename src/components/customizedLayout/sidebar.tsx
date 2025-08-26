@@ -26,9 +26,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapse, setCollapse, icon }) => {
           <div className="flex items-center space-x-2">
             {/* Replace with your actual logo */}
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-xl">C</span>
+              <span className="text-white font-bold text-xl">N</span>
             </div>
-            <h1 className="text-primary font-semibold">CampaAIgn</h1>
+            <h1 className="text-primary font-semibold">Nexus</h1>
           </div>
         )}
       </div>

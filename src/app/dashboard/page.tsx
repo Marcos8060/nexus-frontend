@@ -114,7 +114,7 @@ export default function DashboardPage() {
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Interviews</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -128,7 +128,7 @@ export default function DashboardPage() {
           <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full -translate-y-10 translate-x-10" />
         </Card>
 
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
@@ -143,7 +143,7 @@ export default function DashboardPage() {
           <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-full -translate-y-10 translate-x-10" />
         </Card>
 
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Processing</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
@@ -157,7 +157,7 @@ export default function DashboardPage() {
           <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/10 rounded-full -translate-y-10 translate-x-10" />
         </Card>
 
-        <Card className="relative overflow-hidden">
+        <Card className="relative overflow-hidden bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />

@@ -169,12 +169,6 @@ export default function DashboardInterviewsPage() {
             {viewMode === 'grid' ? <List className="h-4 w-4 mr-2" /> : <Grid3X3 className="h-4 w-4 mr-2" />}
             {viewMode === 'grid' ? 'List' : 'Grid'}
           </Button>
-          <Button asChild>
-            <Link href="/dashboard/interviews">
-              <Plus className="h-4 w-4 mr-2" />
-              New Interview
-            </Link>
-          </Button>
         </div>
       </div>
 
