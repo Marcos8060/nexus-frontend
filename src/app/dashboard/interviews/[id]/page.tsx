@@ -27,6 +27,8 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
+  Volume1,
+  VolumeX,
   Download,
   Search,
   Tag,
@@ -65,6 +67,10 @@ export default function InterviewDetailPage() {
   const [playerRef, setPlayerRef] = useState<HTMLVideoElement | null>(null);
   const [playerError, setPlayerError] = useState<string | null>(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [volume, setVolume] = useState(0.8);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [previousVolume, setPreviousVolume] = useState(0.8);
 
   useEffect(() => {
     if (params.id) {
@@ -146,6 +152,41 @@ export default function InterviewDetailPage() {
     } catch (error) {
       console.error("Skip error:", error);
       setPlayerError("Failed to skip");
+    }
+  };
+
+  const handleVolumeChange = (newVolume: number) => {
+    try {
+      if (playerRef && isPlayerReady) {
+        playerRef.volume = newVolume;
+        setVolume(newVolume);
+        if (newVolume > 0 && isMuted) {
+          setIsMuted(false);
+        }
+      }
+    } catch (error) {
+      console.error("Volume change error:", error);
+    }
+  };
+
+  const handleMuteToggle = () => {
+    try {
+      if (playerRef && isPlayerReady) {
+        if (isMuted) {
+          // Unmute
+          playerRef.volume = previousVolume;
+          setVolume(previousVolume);
+          setIsMuted(false);
+        } else {
+          // Mute
+          setPreviousVolume(volume);
+          playerRef.volume = 0;
+          setVolume(0);
+          setIsMuted(true);
+        }
+      }
+    } catch (error) {
+      console.error("Mute toggle error:", error);
     }
   };
 
@@ -365,20 +406,24 @@ export default function InterviewDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="relative w-full h-64">
-                  <video
-                    ref={setPlayerRef}
-                    src={getVideoUrl(currentInterview.file_path)}
-                    className="w-full h-full object-cover"
-                    onTimeUpdate={(e) => {
-                      const video = e.target as HTMLVideoElement;
-                      dispatch(setCurrentTime(video.currentTime));
-                    }}
-                    onPlay={() => dispatch(setIsPlaying(true))}
-                    onPause={() => dispatch(setIsPlaying(false))}
-                    onLoadedData={() => setIsPlayerReady(true)}
-                    onError={() => setPlayerError("Failed to load video")}
-                  />
+                <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
+                                     <video
+                     ref={setPlayerRef}
+                     src={getVideoUrl(currentInterview.file_path)}
+                     className="w-full h-full object-contain"
+                     onTimeUpdate={(e) => {
+                       const video = e.target as HTMLVideoElement;
+                       dispatch(setCurrentTime(video.currentTime));
+                     }}
+                     onPlay={() => dispatch(setIsPlaying(true))}
+                     onPause={() => dispatch(setIsPlaying(false))}
+                     onLoadedData={() => setIsPlayerReady(true)}
+                     onError={() => setPlayerError("Failed to load video")}
+                     onVolumeChange={(e) => {
+                       const video = e.target as HTMLVideoElement;
+                       setVolume(video.volume);
+                     }}
+                   />
                 </div>
               )}
             </div>
@@ -414,16 +459,50 @@ export default function InterviewDetailPage() {
                   <SkipForward className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="flex items-center gap-2">
-                <Volume2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  {formatTime(currentTime)} /{" "}
-                  {formatTime(transcript[transcript.length - 1]?.end || 0)}
-                </span>
-                {!isPlayerReady && (
-                  <span className="text-xs text-amber-600">Loading...</span>
-                )}
-              </div>
+                             <div className="flex items-center gap-2">
+                 <div className="relative">
+                   <Button
+                     variant="ghost"
+                     size="sm"
+                     onClick={handleMuteToggle}
+                     onMouseEnter={() => setShowVolumeSlider(true)}
+                     onMouseLeave={() => setShowVolumeSlider(false)}
+                     className="p-1"
+                     disabled={!isPlayerReady}
+                   >
+                     {isMuted || volume === 0 ? (
+                       <VolumeX className="h-4 w-4 text-muted-foreground" />
+                     ) : volume < 0.5 ? (
+                       <Volume1 className="h-4 w-4 text-muted-foreground" />
+                     ) : (
+                       <Volume2 className="h-4 w-4 text-muted-foreground" />
+                     )}
+                   </Button>
+                   {showVolumeSlider && (
+                     <div className="absolute bottom-full right-0 mb-2 p-2 bg-white dark:bg-slate-800 border rounded-lg shadow-lg">
+                       <input
+                         type="range"
+                         min="0"
+                         max="1"
+                         step="0.1"
+                         value={isMuted ? 0 : volume}
+                         onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                         className="w-20 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
+                         style={{
+                           background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(isMuted ? 0 : volume) * 100}%, #e5e7eb ${(isMuted ? 0 : volume) * 100}%, #e5e7eb 100%)`
+                         }}
+                       />
+                     </div>
+                   )}
+                 </div>
+                 <span className="text-sm text-muted-foreground">
+                   {formatTime(currentTime)} /{" "}
+                   {formatTime(transcript[transcript.length - 1]?.end || 0)}
+                 </span>
+                 {!isPlayerReady && (
+                   <span className="text-xs text-amber-600">Loading...</span>
+                 )}
+               </div>
             </div>
           </div>
         </CardContent>
