@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
 
+// Mock testing library DOM
+jest.mock('@testing-library/dom', () => ({
+  ...jest.requireActual('@testing-library/dom'),
+}))
+
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter() {
@@ -30,8 +35,51 @@ jest.mock('next/link', () => {
 // Mock Redux store
 jest.mock('@/redux/store', () => ({
   store: {
-    getState: jest.fn(),
+    getState: jest.fn(() => ({
+      interview: {
+        interviews: [],
+        currentInterview: null,
+        loading: false,
+        error: null,
+        currentTime: 0,
+        isPlaying: false,
+        tags: [],
+        searchResults: [],
+        searchQuery: '',
+        selectedText: '',
+        selectedRange: null,
+      }
+    })),
     dispatch: jest.fn(),
+  },
+  RootState: {},
+  AppDispatch: jest.fn(),
+}))
+
+// Mock Redux Provider
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  Provider: ({ children }) => children,
+  useSelector: jest.fn(),
+  useDispatch: jest.fn(() => jest.fn()),
+}))
+
+// Mock API module
+jest.mock('@/lib/api', () => ({
+  interviewApi: {
+    getInterviews: jest.fn(() => Promise.resolve([])),
+    uploadInterview: jest.fn(() => Promise.resolve({})),
+    getInterview: jest.fn(() => Promise.resolve({})),
+    transcribeInterview: jest.fn(() => Promise.resolve({})),
+    deleteInterview: jest.fn(() => Promise.resolve({})),
+    exportInterview: jest.fn(() => Promise.resolve({})),
+    searchTranscript: jest.fn(() => Promise.resolve([])),
+    getKeywords: jest.fn(() => Promise.resolve([])),
+    getQuestions: jest.fn(() => Promise.resolve([])),
+    getTopics: jest.fn(() => Promise.resolve([])),
+    getSpeakerAnalysis: jest.fn(() => Promise.resolve({})),
+    addTag: jest.fn(() => Promise.resolve({})),
+    removeTag: jest.fn(() => Promise.resolve({})),
   },
 }))
 

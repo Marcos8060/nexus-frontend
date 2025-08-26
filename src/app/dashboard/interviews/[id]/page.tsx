@@ -378,7 +378,7 @@ export default function InterviewDetailPage() {
       </div>
 
       {/* Media Player */}
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-foreground">
             <FileText className="h-5 w-5" />
@@ -511,7 +511,7 @@ export default function InterviewDetailPage() {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Transcript */}
-        <Card>
+        <Card className="bg-white">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-foreground">
@@ -557,7 +557,7 @@ export default function InterviewDetailPage() {
         </Card>
 
         {/* AI Analysis */}
-        <Card>
+        <Card className="bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Brain className="h-5 w-5" />
@@ -652,7 +652,7 @@ export default function InterviewDetailPage() {
       </div>
 
       {/* Interview Metadata */}
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>Interview Details</CardTitle>
         </CardHeader>
