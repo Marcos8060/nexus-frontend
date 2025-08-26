@@ -299,7 +299,7 @@ export default function InterviewDetailPage() {
             <Button
               onClick={() => dispatch(transcribeInterview(currentInterview.id))}
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700"
+              className=""
             >
               <Brain className="h-4 w-4 mr-2" />
               Start Transcription
