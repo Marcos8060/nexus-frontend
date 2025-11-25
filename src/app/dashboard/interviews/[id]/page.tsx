@@ -331,7 +331,7 @@ export default function InterviewDetailPage() {
               {currentInterview.original_name}
             </h1>
             <p className="text-muted-foreground">
-              Interview Analysis & Transcript
+              Video Analysis & Transcript
             </p>
           </div>
         </div>
@@ -574,7 +574,7 @@ export default function InterviewDetailPage() {
 
               <TabsContent value="summary" className="space-y-4">
                 <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800">
-                  <h4 className="font-semibold mb-2">Interview Summary</h4>
+                  <h4 className="font-semibold mb-2">Video Summary</h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {analysis.summary}
                   </p>
@@ -654,7 +654,7 @@ export default function InterviewDetailPage() {
       {/* Interview Metadata */}
       <Card className="bg-white">
         <CardHeader>
-          <CardTitle>Interview Details</CardTitle>
+          <CardTitle>Video Details</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

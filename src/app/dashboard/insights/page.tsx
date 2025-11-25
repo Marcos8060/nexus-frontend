@@ -26,7 +26,7 @@ export default function InsightsPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">AI Insights</h1>
           <p className="text-slate-600">
-            Intelligent analysis and insights from your interview data
+            Intelligent analysis and insights from your video data
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function InsightsPage() {
               Sentiment Analysis
             </CardTitle>
             <CardDescription>
-              Overall sentiment trends across all interviews
+              Overall sentiment trends across all videos
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -175,7 +175,7 @@ export default function InsightsPage() {
             Response Quality Metrics
           </CardTitle>
           <CardDescription className='text-slate-600'>
-            Detailed analysis of interview response quality
+            Detailed analysis of video response quality
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -215,7 +215,7 @@ export default function InsightsPage() {
             Trend Analysis
           </CardTitle>
           <CardDescription className='text-slate-600'>
-            Monthly trends and patterns in interview performance
+            Monthly trends and patterns in video performance
           </CardDescription>
         </CardHeader>
         <CardContent>

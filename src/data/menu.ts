@@ -22,12 +22,12 @@ const sidebarMenu: MenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    label: "Interview Management",
+    label: "Video Management",
     path: "/dashboard/interviews",
     icon: FileAudio,
     children: [
       {
-        label: "All Interviews",
+        label: "All Videos",
         path: "/dashboard/interviews",
         icon: FileText,
       },

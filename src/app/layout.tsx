@@ -5,8 +5,8 @@ import { ReduxProvider } from "./providers";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "HR Interview Transcription & Analysis",
-  description: "Upload, transcribe, and analyze interview recordings with AI-powered insights",
+  title: "Video Transcription & Analysis",
+  description: "Upload, transcribe, and analyze video recordings with AI-powered insights",
 };
 
 const inter = Inter({ subsets: ["latin"] });

@@ -86,9 +86,9 @@ export default function DashboardPage() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-600">Interview Analytics</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-600">Video Analytics</h1>
           <p className="text-muted-foreground text-slate-600">
-            Monitor and manage your interview transcription pipeline
+            Monitor and manage your video transcription pipeline
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -99,7 +99,7 @@ export default function DashboardPage() {
           <Button asChild>
             <Link href="/dashboard/interviews">
               <Plus className="h-4 w-4 mr-2" />
-              New Interview
+              New Video
             </Link>
           </Button>
         </div>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="relative overflow-hidden bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Interviews</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Videos</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -211,8 +211,8 @@ export default function DashboardPage() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <FileAudio className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No interviews yet</p>
-                  <p className="text-sm">Upload your first interview to get started</p>
+                  <p>No videos yet</p>
+                  <p className="text-sm">Upload your first video to get started</p>
                 </div>
               )}
             </div>
@@ -271,10 +271,10 @@ export default function DashboardPage() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Recent Interviews
+                Recent Videos
               </CardTitle>
               <CardDescription>
-                Latest interview uploads and their status
+                Latest video uploads and their status
               </CardDescription>
             </div>
             <Button variant="outline" size="sm" asChild>
@@ -336,7 +336,7 @@ export default function DashboardPage() {
             AI Insights
           </CardTitle>
           <CardDescription className='text-slate-600'>
-            Key insights from your interview analysis
+            Key insights from your video analysis
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -345,7 +345,7 @@ export default function DashboardPage() {
               <Zap className="h-8 w-8 mx-auto mb-2 text-blue-600" />
               <h3 className="font-semibold text-blue-900 dark:text-blue-100">Sentiment Analysis</h3>
               <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                {Math.floor(Math.random() * 20) + 80}% positive interviews
+                {Math.floor(Math.random() * 20) + 80}% positive videos
               </p>
             </div>
             

@@ -187,10 +187,10 @@ export default function DashboardInterviewsPage() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-slate-600">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Interview Management
+            Video Management
           </h1>
           <p className="text-muted-foreground">
-            Upload, transcribe, and analyze your interview recordings
+            Upload, transcribe, and analyze your video recordings
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -218,7 +218,7 @@ export default function DashboardInterviewsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            Upload New Interview
+            Upload New Video
           </CardTitle>
           <CardDescription>
             Upload audio or video files (MP3, WAV, MP4, MOV) up to 100MB
@@ -227,7 +227,7 @@ export default function DashboardInterviewsPage() {
         <CardContent>
           <div className="border border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-8 text-center">
             <Upload className="h-12 w-12 mx-auto text-slate-400 mb-4" />
-            <p className="font-medium mb-2">Drop your interview file here</p>
+            <p className="font-medium mb-2">Drop your video file here</p>
             <p className="text-sm text-muted-foreground mb-4">
               or click to browse your files
             </p>
@@ -262,7 +262,7 @@ export default function DashboardInterviewsPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
-              placeholder="Search interviews..."
+              placeholder="Search videos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 focus:outline-none text-sm"
@@ -288,7 +288,7 @@ export default function DashboardInterviewsPage() {
         >
           <TabsList>
             <TabsTrigger value="all">
-              All Interviews ({filteredInterviews.length})
+              All Videos ({filteredInterviews.length})
             </TabsTrigger>
             <TabsTrigger value="recent">Recent</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
@@ -317,10 +317,10 @@ export default function DashboardInterviewsPage() {
                 <CardContent className="p-12 text-center">
                   <FileAudio className="h-12 w-12 mx-auto text-slate-400 mb-4" />
                   <h3 className="text-lg font-medium mb-2">
-                    No interviews found
+                    No videos found
                   </h3>
                   <p className="text-muted-foreground">
-                    Upload your first interview to get started
+                    Upload your first video to get started
                   </p>
                 </CardContent>
               </div>

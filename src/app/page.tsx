@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-input border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -56,13 +56,12 @@ export default function Home() {
 
             {/* CTA */}
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
               <Button variant="ghost" size="sm">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
                 onClick={() => router.push('/dashboard')}
-                className="bg-foreground hover:bg-foreground/90 text-background"
+                className="bg-primary hover:bg-foreground/90 text-background"
               >
                 Get Started
               </Button>
@@ -101,7 +100,7 @@ export default function Home() {
             <Button 
               onClick={() => router.push('/dashboard')}
               size="lg" 
-              className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 text-lg font-medium"
+              className="bg-primary text-white px-8 py-4 font-medium"
             >
               Contact Us
               <ArrowRight className="ml-2 h-5 w-5" />

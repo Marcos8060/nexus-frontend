@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { RiArrowLeftDoubleFill } from "react-icons/ri";
 import { RiArrowRightDoubleFill } from "react-icons/ri";
 import { RiMenu2Fill } from "react-icons/ri";
@@ -8,11 +8,9 @@ import { IoChevronBack } from "react-icons/io5";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import sidebarMenu from "@/data/menu";
 import Sidebar from "./sidebar";
 import CustomizedHeader from "./header";
 import { IconType } from "react-icons";
-import { LogOut } from "lucide-react";
 
 interface MenuChild {
   path: string;
@@ -47,25 +45,7 @@ export default function CustomizedLayout({ children }: CustomizedLayoutProps) {
   ) : (
     <RiArrowLeftDoubleFill className="text-primary cursor-pointer text-2xl bg-background rounded-full h-6 w-6" />
   );
-
-  // Filter and organize menu items
-  useEffect(() => {
-    // For now, using all menu items since auth is commented out
-    const filtered = sidebarMenu as unknown as MenuItem[];
-
-    // Get the first 4 important menus for the bottom nav
-    const mainNavMenus = filtered.filter(
-      (item) =>
-        item.label === "Dashboard" ||
-        item.label === "Campaigns" ||
-        item.label === "Influencers" ||
-        item.label === "Inbox"
-    );
-
-    setMainMenus(mainNavMenus);
-    setMoreMenus(filtered.filter((item) => !mainNavMenus.includes(item)));
-  }, []);
-
+  
   const handleMoreClick = () => {
     setMobileMenuOpen(true);
     setSelectedParentMenu(null);
